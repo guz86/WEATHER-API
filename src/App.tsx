@@ -2,7 +2,7 @@
 import { ChangeEvent, useState } from 'react'
 import './App.css'
 //const apiKey = import.meta.env.VITE_API_KEY;
-const apiKey = import.meta.env.VITE_API_KEY;
+const apiKey = process.env.VITE_API_KEY;
 
 function App() {
   // http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}

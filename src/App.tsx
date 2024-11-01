@@ -1,9 +1,8 @@
 
 import { ChangeEvent, useState } from 'react'
 import './App.css'
-const env = await import.meta.env;
-const apiKey = env.VITE_API_KEY;
-//const apiKey = import.meta.env.VITE_API_KEY;
+
+const apiKey = import.meta.env.VITE_API_KEY;
 //const apiKey = process.env.VITE_API_KEY;
 
 function App() {

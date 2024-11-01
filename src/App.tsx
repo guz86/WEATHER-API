@@ -16,7 +16,7 @@ function App() {
   const [options, setOptions] = useState<optionType[]>([]);
 
   const getSearchOptions = (value: string) => {
-    fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${value.trim()}&limit=5&appid=${apiKey}`)
+    fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${value.trim()}&limit=5&appid=${apiKey}`)
       .then((res) => res.json())
       .then((data) => {
         const formattedOptions = data.map((item: optionType) => ({

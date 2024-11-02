@@ -14,6 +14,6 @@ const Pop = (): JSX.Element => (
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
-export default Pop
+export default Pop;

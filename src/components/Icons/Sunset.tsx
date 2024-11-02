@@ -14,6 +14,6 @@ const Sunset = (): JSX.Element => (
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
-export default Sunset
+export default Sunset;

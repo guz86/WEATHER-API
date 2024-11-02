@@ -1,113 +1,92 @@
 import { ChangeEvent, useState } from 'react';
+import useDebounce from '../utils/useDebounce';
+import { forecastType, optionType } from '../types';
+
+// http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
+// https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
+
 const apiKey = import.meta.env.VITE_API_KEY;
+const GEO_API_URL = 'https://api.openweathermap.org/geo/1.0/direct';
+const FORECAST_API_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+const LIMIT = 5;
+const UNITS = 'metric';
 
 export const useForecast = () => {
-    // http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
-    // https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
+  const [term, setTerm] = useState<string>('');
+  const [options, setOptions] = useState<optionType[]>([]);
+  const [selectedOption, setSelectedOption] = useState<optionType | null>(null);
+  const [forecast, setForecast] = useState<forecastType | null>(null);
 
-    type optionType = {
-        name: string;
-        country: string;
-        state: string;
-        lat: number;
-        lon: number;
-    };
+  const getSearchOptions = async (value: string) => {
+    try {
+      const response = await fetch(
+        `${GEO_API_URL}?q=${value.trim()}&limit=${LIMIT}&appid=${apiKey}`
+      );
+      if (!response.ok) {
+        throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+      }
 
-    type forecastType = {
-        name: string;
-        country: string;
-        list: [
-            {
-                dt: number;
-                main: {
-                    feels_like: number;
-                    humidity: number;
-                    pressure: number;
-                    temp: number;
-                    temp_max: number;
-                    temp_min: number;
-                };
-                weather: [
-                    {
-                        main: string;
-                        icon: string;
-                        description: string;
-                    },
-                ];
-                wind: {
-                    speed: number;
-                    gust: number;
-                    deg: number;
-                };
-                clouds: {
-                    all: number;
-                };
-                pop: number;
-                visibility: number;
-            },
-        ];
-        sunrise: number;
-        sunset: number;
-    };
+      const data = await response.json();
+      const formattedOptions = data.map((item: optionType) => ({
+        name: item.name,
+        country: item.country,
+        state: item.state || '',
+        lat: item.lat,
+        lon: item.lon,
+      }));
 
-    const [term, setTerm] = useState<string>('');
-    const [options, setOptions] = useState<optionType[]>([]);
-    const [forecast, setForecast] = useState<forecastType | null>(null);
+      setOptions(formattedOptions);
+    } catch (error) {
+      console.error('Error in data retrieval:', error);
+    }
+  };
 
-    const getSearchOptions = (value: string) => {
-        fetch(
-            `https://api.openweathermap.org/geo/1.0/direct?q=${value.trim()}&limit=5&appid=${apiKey}`
-        )
-            .then((res) => res.json())
-            .then((data) => {
-                const formattedOptions = data.map((item: optionType) => ({
-                    name: item.name,
-                    country: item.country,
-                    state: item.state || '',
-                    lat: item.lat,
-                    lon: item.lon,
-                }));
-                setOptions(formattedOptions);
-            });
-    };
+  const debouncedFetchOptions = useDebounce(async () => {
+    if (term) {
+      await getSearchOptions(term);
+    }
+  }, 500);
 
-    const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        console.log('onInputChange e', e.target.value);
-        // const value = e.target.value.trim();
-        const value = e.target.value;
-        setTerm(value);
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTerm(value);
 
-        if (value === '') return;
+    if (value === '') return;
 
-        getSearchOptions(value);
-    };
+    debouncedFetchOptions();
+  };
 
-    const onSubmit = () => {
-        if (!term || options.length === 0) return;
-        onOptionSelect(options[0]);
-    };
+  const onSubmit = async () => {
+    if (!term || selectedOption === null) return;
 
-    const onOptionSelect = (option: optionType) => {
-        console.log({ option });
+    await fetchResult(selectedOption);
+  };
 
-        setOptions([]);
-        setTerm(option.name);
+  const fetchResult = async (option: optionType) => {
+    try {
+      const response = await fetch(
+        `${FORECAST_API_URL}?lat=${option.lat}&lon=${option.lon}&units=${UNITS}&appid=${apiKey}`
+      );
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
 
-        fetch(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${option.lat}&lon=${option.lon}&units=metric&appid=${apiKey}`
-        )
-            .then((res) => res.json())
-            .then((data) => {
-                console.log('data', { data });
+      const data = await response.json();
+      const forecastData = {
+        ...data.city,
+        list: data.list.slice(0, 16),
+      };
+      setForecast(forecastData);
+    } catch (error) {
+      console.error('Error in the forecast:', error);
+    }
+  };
 
-                const foracastData = {
-                    ...data.city,
-                    list: data.list.slice(0, 16),
-                }
-                setForecast(foracastData);
+  const onOptionSelect = (option: optionType) => {
+    setTerm(option.name);
+    setSelectedOption(option);
+    setOptions([]);
+  };
 
-                console.log({ foracastData })
-            });
-    };
-    return { term, options, forecast, onInputChange, onOptionSelect, onSubmit };
+  return { term, options, forecast, onInputChange, onOptionSelect, onSubmit };
 };

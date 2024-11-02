@@ -14,6 +14,6 @@ const aTest = (): JSX.Element => (
       stroke="currentColor"
     />
   </svg>
-)
+);
 
-export default aTest
+export default aTest;

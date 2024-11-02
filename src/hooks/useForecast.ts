@@ -1,55 +1,11 @@
 import { ChangeEvent, useState } from 'react';
 import useDebounce from '../utils/useDebounce';
+import { forecastType, optionType } from '../types';
 const apiKey = import.meta.env.VITE_API_KEY;
 
 export const useForecast = () => {
   // http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
   // https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
-
-  type optionType = {
-    name: string;
-    country: string;
-    state: string;
-    lat: number;
-    lon: number;
-  };
-
-  type forecastType = {
-    name: string;
-    country: string;
-    list: [
-      {
-        dt: number;
-        main: {
-          feels_like: number;
-          humidity: number;
-          pressure: number;
-          temp: number;
-          temp_max: number;
-          temp_min: number;
-        };
-        weather: [
-          {
-            main: string;
-            icon: string;
-            description: string;
-          },
-        ];
-        wind: {
-          speed: number;
-          gust: number;
-          deg: number;
-        };
-        clouds: {
-          all: number;
-        };
-        pop: number;
-        visibility: number;
-      },
-    ];
-    sunrise: number;
-    sunset: number;
-  };
 
   const [term, setTerm] = useState<string>('');
   const [options, setOptions] = useState<optionType[]>([]);
@@ -78,7 +34,7 @@ export const useForecast = () => {
     if (term) {
       getSearchOptions(term);
     }
-  }, 1000);
+  }, 500);
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     // const value = e.target.value.trim();

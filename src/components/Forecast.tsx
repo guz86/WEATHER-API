@@ -1,44 +1,3 @@
-type forecastType = {
-  name: string;
-  country: string;
-  list: [
-    {
-      dt: number;
-      main: {
-        feels_like: number;
-        humidity: number;
-        pressure: number;
-        temp: number;
-        temp_max: number;
-        temp_min: number;
-      };
-      weather: [
-        {
-          main: string;
-          icon: string;
-          description: string;
-        },
-      ];
-      wind: {
-        speed: number;
-        gust: number;
-        deg: number;
-      };
-      clouds: {
-        all: number;
-      };
-      pop: number;
-      visibility: number;
-    },
-  ];
-  sunrise: number;
-  sunset: number;
-};
-
-type ForecastProps = {
-  forecast: forecastType;
-};
-
 const Degree = ({ temp }: { temp: number }): JSX.Element => (
   <>
     <span>
@@ -56,13 +15,8 @@ import Visibility from './Icons/Visibility';
 import Wind from './Icons/Wind';
 import Sunrise from './Icons/Sunrise';
 import Sunset from './Icons/Sunset';
+import { ForecastProps, Props } from '../types';
 
-type Props = {
-  icon: 'wind' | 'feels' | 'humidity' | 'visibility' | 'pressure' | 'pop';
-  title: string;
-  info: string | JSX.Element;
-  description?: string | JSX.Element;
-};
 
 const icons = {
   wind: Wind,

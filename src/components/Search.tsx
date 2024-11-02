@@ -1,20 +1,4 @@
-import { ChangeEvent } from 'react';
-
-type optionType = {
-  name: string;
-  country: string;
-  state: string;
-  lat: number;
-  lon: number;
-};
-
-type Props = {
-  term: string;
-  options: optionType[];
-  onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onOptionSelect: (option: optionType) => void;
-  onSubmit: () => void;
-};
+import { SearchProps } from "../types";
 
 function Search({
   term,
@@ -22,7 +6,7 @@ function Search({
   onInputChange,
   onOptionSelect,
   onSubmit,
-}: Props) {
+}: SearchProps) {
   return (
     <>
       <section className="w-full md:max-w-[500px] p-4 flex flex-col text-center items-center justify-center md:px-10 lg:p-24 h-full lg:h-[500px] bg-white bg-opacity-20 backdrop-blur-lg rounded drop-shadow-lg text-zinc-700">

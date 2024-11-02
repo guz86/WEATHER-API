@@ -1,50 +1,50 @@
-# React + TypeScript + Vite
+# SPA WEATHER API
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This application provides real-time weather forecasts based on user-selected locations. Users can search for cities, view location options, and retrieve detailed weather data, including temperature and conditions. The intuitive interface and responsive design ensure a seamless experience across devices.
+ 
+Deploy: [https://weather-api-liard-psi.vercel.app/](https://weather-api-liard-psi.vercel.app/)
 
-Currently, two official plugins are available:
+## Author
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Pavel Gordienko](https://github.com/guz86)
 
-## Expanding the ESLint configuration
+## Setup and Running
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Use `node 22.x` or higher.
+- Clone this repo: `$ git clone [https://github.com/guz86/skilla-task.git](https://github.com/guz86/WEATHER-API.git)`.
+- Install dependencies: `$ npm install`.
+- Start server: `$ npm run dev`.
+- Now you can see web application to the address: `http://localhost:5173/`.
 
-- Configure the top-level `parserOptions` property like this:
+### Build
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+Builds the app for production to the build folder. It correctly bundles React in production mode and optimizes the build for the best performance.
+
+```bash
+npm run build
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Stack
+- React
+- Typescript
+- Vite
+- tailwindcss
+ 
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Folder structure
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- components
+- utils
+- hooks
+- assets
+
+## Screenshots
+![image](https://github.com/user-attachments/assets/476348e7-71bb-49f7-8cfb-8775b1142d00)
+
+![image](https://github.com/user-attachments/assets/ea17766c-e750-40a5-907c-924b360d67e4)
+
+
+
+
+
+

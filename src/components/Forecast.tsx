@@ -1,3 +1,4 @@
+import React, { useRef } from 'react';
 import Sunrise from './Icons/Sunrise';
 import Sunset from './Icons/Sunset';
 import { ForecastProps } from '../types';
@@ -11,16 +12,34 @@ import {
 } from '../utils/calculate';
 import { Tile } from './Tile';
 
-export const Forecast = ({ forecast }: ForecastProps) => {
+export const Forecast: React.FC<ForecastProps> = ({ forecast }) => {
   const today = forecast.list[0];
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({
+        left: -100,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({
+        left: 100,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   return (
-    <div className="w-full md:max-w-[500px] py-4 md:py-4 md:px-10 lg:px-24 h-full lg:h-auto bg-white bg-opacity-20 backdrop-blur-ls rounded drop-shadow-lg">
+    <div className="relative w-full md:max-w-[500px] py-4 md:py-4 md:px-10 lg:px-24 h-full lg:h-auto bg-white bg-opacity-20 backdrop-blur-ls rounded drop-shadow-lg">
       <div className="mx-auto w-[300px]">
         <section className="text-center">
           <h2 className="text-2xl font-black">
-            {forecast.name}{' '}
-            <span className="font-thin">{forecast.country}</span>
+            {forecast.name} <span className="font-thin">{forecast.country}</span>
           </h2>
           <h1 className="text-4xl font-extrabold">
             <Degree temp={Math.round(today.main.temp)} />
@@ -34,54 +53,68 @@ export const Forecast = ({ forecast }: ForecastProps) => {
           </p>
         </section>
 
-        <section className="flex overflow-x-scroll mt-4 pb-2 mb-5">
-          {forecast.list.map((item, i) => (
-            <div
-              key={i}
-              className="inline-block text-center w-[50px] flex-shrink-0"
-            >
-              <p className="text-sm">
-                {i === 0 ? 'Now' : new Date(item.dt * 1000).getHours()}
-              </p>
-              <img
-                alt={`weather-icon-${item.weather[0].description}`}
-                src={`http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-              />
-              <p className="text-sm font-bold">
-                <Degree temp={Math.round(item.main.temp)} />
-              </p>
+        <div className="relative mt-4 pb-2 mb-6">
+          <section ref={scrollRef} className="flex overflow-x-hidden scrollbar-hide mx-6">
+            <div className="flex space-x-6">
+              {forecast.list.map((item, i) => (
+                <div
+                  key={i}
+                  className="inline-block text-center w-[30px] flex-shrink-0"
+                >
+                  <p className="text-sm">
+                    {i === 0 ? 'Now' : new Date(item.dt * 1000).getHours()}
+                  </p>
+                  <img
+                    alt={`weather-icon-${item.weather[0].description}`}
+                    src={`http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                  />
+                  <p className="text-sm font-bold">
+                    <Degree temp={Math.round(item.main.temp)} />
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
-        </section>
+          </section>
+
+
+          <button
+            onClick={scrollLeft}
+            className="bg-opacity-30 absolute left-[-15px] top-1/2 transform -translate-y-1/2 bg-gray-100 p-2 rounded-full text-white w-8 h-8 flex items-center justify-center"
+          >
+            {"\u2039"}
+          </button>
+          <button
+            onClick={scrollRight}
+            className="bg-opacity-30 absolute right-[-15px] top-1/2 transform -translate-y-1/2 bg-gray-100 p-2 rounded-full text-white w-8 h-8 flex items-center justify-center"
+          >
+            {"\u203A"}
+          </button>
+        </div>
 
         <section className="flex flex-wrap justify-between text-zinc-700">
           <div className="w-[140px] text-xs font-bold flex flex-col items-center bg-white/20 backdrop-blur-ls rounded drop-shadow-lg py-4 mb-5">
-            <Sunrise />{' '}
+            <Sunrise />
             <span className="mt-2">{getSunTime(forecast.sunrise)}</span>
           </div>
           <div className="w-[140px] text-xs font-bold flex flex-col items-center bg-white/20 backdrop-blur-ls rounded drop-shadow-lg py-4 mb-5">
-            <Sunset />{' '}
+            <Sunset />
             <span className="mt-2">{getSunTime(forecast.sunset)}</span>
           </div>
-
           <Tile
             icon="wind"
             title="Wind"
             info={`${Math.round(today.wind.speed)} km/h`}
-            description={`${getWindDirection(
-              Math.round(today.wind.deg)
-            )}, gusts 
+            description={`${getWindDirection(Math.round(today.wind.deg))}, gusts 
             ${today.wind.gust.toFixed(1)} km/h`}
           />
           <Tile
             icon="feels"
             title="Feels like"
             info={<Degree temp={Math.round(today.main.feels_like)} />}
-            description={`Feels ${
-              Math.round(today.main.feels_like) < Math.round(today.main.temp)
-                ? 'colder'
-                : 'warmer'
-            }`}
+            description={`Feels ${Math.round(today.main.feels_like) < Math.round(today.main.temp)
+              ? 'colder'
+              : 'warmer'
+              }`}
           />
           <Tile
             icon="humidity"
@@ -99,9 +132,8 @@ export const Forecast = ({ forecast }: ForecastProps) => {
             icon="pressure"
             title="Pressure"
             info={`${today.main.pressure} hPa`}
-            description={` ${
-              Math.round(today.main.pressure) < 1013 ? 'Lower' : 'Higher'
-            } than standard`}
+            description={` ${Math.round(today.main.pressure) < 1013 ? 'Lower' : 'Higher'
+              } than standard`}
           />
           <Tile
             icon="visibility"
